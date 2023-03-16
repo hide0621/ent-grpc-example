@@ -5,6 +5,7 @@ go 1.19
 require (
 	entgo.io/contrib v0.3.5
 	entgo.io/ent v0.11.10
+	github.com/mattn/go-sqlite3 v1.14.16
 	google.golang.org/grpc v1.52.3
 	google.golang.org/protobuf v1.29.1
 )
