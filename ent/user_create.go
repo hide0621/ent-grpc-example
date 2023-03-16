@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"ent-grpc-example/ent/category"
 	"ent-grpc-example/ent/user"
 	"errors"
 	"fmt"
@@ -29,6 +30,21 @@ func (uc *UserCreate) SetName(s string) *UserCreate {
 func (uc *UserCreate) SetEmailAddress(s string) *UserCreate {
 	uc.mutation.SetEmailAddress(s)
 	return uc
+}
+
+// AddAdministeredIDs adds the "administered" edge to the Category entity by IDs.
+func (uc *UserCreate) AddAdministeredIDs(ids ...int) *UserCreate {
+	uc.mutation.AddAdministeredIDs(ids...)
+	return uc
+}
+
+// AddAdministered adds the "administered" edges to the Category entity.
+func (uc *UserCreate) AddAdministered(c ...*Category) *UserCreate {
+	ids := make([]int, len(c))
+	for i := range c {
+		ids[i] = c[i].ID
+	}
+	return uc.AddAdministeredIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -104,6 +120,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.EmailAddress(); ok {
 		_spec.SetField(user.FieldEmailAddress, field.TypeString, value)
 		_node.EmailAddress = value
+	}
+	if nodes := uc.mutation.AdministeredIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.AdministeredTable,
+			Columns: []string{user.AdministeredColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
