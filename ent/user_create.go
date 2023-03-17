@@ -32,6 +32,20 @@ func (uc *UserCreate) SetEmailAddress(s string) *UserCreate {
 	return uc
 }
 
+// SetAlias sets the "alias" field.
+func (uc *UserCreate) SetAlias(s string) *UserCreate {
+	uc.mutation.SetAlias(s)
+	return uc
+}
+
+// SetNillableAlias sets the "alias" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAlias(s *string) *UserCreate {
+	if s != nil {
+		uc.SetAlias(*s)
+	}
+	return uc
+}
+
 // AddAdministeredIDs adds the "administered" edge to the Category entity by IDs.
 func (uc *UserCreate) AddAdministeredIDs(ids ...int) *UserCreate {
 	uc.mutation.AddAdministeredIDs(ids...)
@@ -120,6 +134,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.EmailAddress(); ok {
 		_spec.SetField(user.FieldEmailAddress, field.TypeString, value)
 		_node.EmailAddress = value
+	}
+	if value, ok := uc.mutation.Alias(); ok {
+		_spec.SetField(user.FieldAlias, field.TypeString, value)
+		_node.Alias = value
 	}
 	if nodes := uc.mutation.AdministeredIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

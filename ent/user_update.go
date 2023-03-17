@@ -40,6 +40,26 @@ func (uu *UserUpdate) SetEmailAddress(s string) *UserUpdate {
 	return uu
 }
 
+// SetAlias sets the "alias" field.
+func (uu *UserUpdate) SetAlias(s string) *UserUpdate {
+	uu.mutation.SetAlias(s)
+	return uu
+}
+
+// SetNillableAlias sets the "alias" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableAlias(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetAlias(*s)
+	}
+	return uu
+}
+
+// ClearAlias clears the value of the "alias" field.
+func (uu *UserUpdate) ClearAlias() *UserUpdate {
+	uu.mutation.ClearAlias()
+	return uu
+}
+
 // AddAdministeredIDs adds the "administered" edge to the Category entity by IDs.
 func (uu *UserUpdate) AddAdministeredIDs(ids ...int) *UserUpdate {
 	uu.mutation.AddAdministeredIDs(ids...)
@@ -123,6 +143,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := uu.mutation.EmailAddress(); ok {
 		_spec.SetField(user.FieldEmailAddress, field.TypeString, value)
 	}
+	if value, ok := uu.mutation.Alias(); ok {
+		_spec.SetField(user.FieldAlias, field.TypeString, value)
+	}
+	if uu.mutation.AliasCleared() {
+		_spec.ClearField(user.FieldAlias, field.TypeString)
+	}
 	if uu.mutation.AdministeredCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.O2M,
@@ -197,6 +223,26 @@ func (uuo *UserUpdateOne) SetName(s string) *UserUpdateOne {
 // SetEmailAddress sets the "email_address" field.
 func (uuo *UserUpdateOne) SetEmailAddress(s string) *UserUpdateOne {
 	uuo.mutation.SetEmailAddress(s)
+	return uuo
+}
+
+// SetAlias sets the "alias" field.
+func (uuo *UserUpdateOne) SetAlias(s string) *UserUpdateOne {
+	uuo.mutation.SetAlias(s)
+	return uuo
+}
+
+// SetNillableAlias sets the "alias" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableAlias(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetAlias(*s)
+	}
+	return uuo
+}
+
+// ClearAlias clears the value of the "alias" field.
+func (uuo *UserUpdateOne) ClearAlias() *UserUpdateOne {
+	uuo.mutation.ClearAlias()
 	return uuo
 }
 
@@ -312,6 +358,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if value, ok := uuo.mutation.EmailAddress(); ok {
 		_spec.SetField(user.FieldEmailAddress, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.Alias(); ok {
+		_spec.SetField(user.FieldAlias, field.TypeString, value)
+	}
+	if uuo.mutation.AliasCleared() {
+		_spec.ClearField(user.FieldAlias, field.TypeString)
 	}
 	if uuo.mutation.AdministeredCleared() {
 		edge := &sqlgraph.EdgeSpec{

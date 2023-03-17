@@ -19,6 +19,8 @@ type User struct {
 	Name string `json:"name,omitempty"`
 	// EmailAddress holds the value of the "email_address" field.
 	EmailAddress string `json:"email_address,omitempty"`
+	// Alias holds the value of the "alias" field.
+	Alias string `json:"alias,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges UserEdges `json:"edges"`
@@ -49,7 +51,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldID:
 			values[i] = new(sql.NullInt64)
-		case user.FieldName, user.FieldEmailAddress:
+		case user.FieldName, user.FieldEmailAddress, user.FieldAlias:
 			values[i] = new(sql.NullString)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type User", columns[i])
@@ -83,6 +85,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field email_address", values[i])
 			} else if value.Valid {
 				u.EmailAddress = value.String
+			}
+		case user.FieldAlias:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field alias", values[i])
+			} else if value.Valid {
+				u.Alias = value.String
 			}
 		}
 	}
@@ -122,6 +130,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("email_address=")
 	builder.WriteString(u.EmailAddress)
+	builder.WriteString(", ")
+	builder.WriteString("alias=")
+	builder.WriteString(u.Alias)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -18,6 +18,7 @@ func (User) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").Unique().Annotations(entproto.Field(2)),
 		field.String("email_address").Unique().Annotations(entproto.Field(3)),
+		field.String("alias").Optional().Annotations(entproto.Field(4)),
 	}
 }
 

@@ -13,6 +13,7 @@ import (
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 	strconv "strconv"
 )
 
@@ -32,6 +33,8 @@ func NewUserService(client *ent.Client) *UserService {
 // toProtoUser transforms the ent type to the pb type
 func toProtoUser(e *ent.User) (*User, error) {
 	v := &User{}
+	alias := wrapperspb.String(e.Alias)
+	v.Alias = alias
 	email_address := e.EmailAddress
 	v.EmailAddress = email_address
 	id := int64(e.ID)
@@ -121,6 +124,10 @@ func (svc *UserService) Update(ctx context.Context, req *UpdateUserRequest) (*Us
 	user := req.GetUser()
 	userID := int(user.GetId())
 	m := svc.client.User.UpdateOneID(userID)
+	if user.GetAlias() != nil {
+		userAlias := user.GetAlias().GetValue()
+		m.SetAlias(userAlias)
+	}
 	userEmailAddress := user.GetEmailAddress()
 	m.SetEmailAddress(userEmailAddress)
 	userName := user.GetName()
@@ -263,6 +270,10 @@ func (svc *UserService) BatchCreate(ctx context.Context, req *BatchCreateUsersRe
 
 func (svc *UserService) createBuilder(user *User) (*ent.UserCreate, error) {
 	m := svc.client.User.Create()
+	if user.GetAlias() != nil {
+		userAlias := user.GetAlias().GetValue()
+		m.SetAlias(userAlias)
+	}
 	userEmailAddress := user.GetEmailAddress()
 	m.SetEmailAddress(userEmailAddress)
 	userName := user.GetName()
