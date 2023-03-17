@@ -47,14 +47,6 @@ message GetUserRequest {
   }
 }
 
-message UpdateUserRequest {
-  User user = 1;
-}
-
-message DeleteUserRequest {
-  int64 id = 1;
-}
-
 message ListUserRequest {
   int32 page_size = 1;
 
@@ -89,10 +81,6 @@ service UserService {
   rpc Create ( CreateUserRequest ) returns ( User );
 
   rpc Get ( GetUserRequest ) returns ( User );
-
-  rpc Update ( UpdateUserRequest ) returns ( User );
-
-  rpc Delete ( DeleteUserRequest ) returns ( google.protobuf.Empty );
 
   rpc List ( ListUserRequest ) returns ( ListUserResponse );
 

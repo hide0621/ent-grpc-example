@@ -34,6 +34,8 @@ func (User) Edges() []ent.Edge {
 func (User) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entproto.Message(),
-		entproto.Service(),
+		entproto.Service(
+			entproto.Methods(entproto.MethodCreate | entproto.MethodGet | entproto.MethodList | entproto.MethodBatchCreate),
+		),
 	}
 }

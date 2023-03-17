@@ -11,7 +11,6 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -25,8 +24,6 @@ const _ = grpc.SupportPackageIsVersion7
 type UserServiceClient interface {
 	Create(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*User, error)
 	Get(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*User, error)
-	Update(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error)
-	Delete(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	List(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserResponse, error)
 	BatchCreate(ctx context.Context, in *BatchCreateUsersRequest, opts ...grpc.CallOption) (*BatchCreateUsersResponse, error)
 }
@@ -57,24 +54,6 @@ func (c *userServiceClient) Get(ctx context.Context, in *GetUserRequest, opts ..
 	return out, nil
 }
 
-func (c *userServiceClient) Update(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error) {
-	out := new(User)
-	err := c.cc.Invoke(ctx, "/entpb.UserService/Update", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *userServiceClient) Delete(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/entpb.UserService/Delete", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *userServiceClient) List(ctx context.Context, in *ListUserRequest, opts ...grpc.CallOption) (*ListUserResponse, error) {
 	out := new(ListUserResponse)
 	err := c.cc.Invoke(ctx, "/entpb.UserService/List", in, out, opts...)
@@ -99,8 +78,6 @@ func (c *userServiceClient) BatchCreate(ctx context.Context, in *BatchCreateUser
 type UserServiceServer interface {
 	Create(context.Context, *CreateUserRequest) (*User, error)
 	Get(context.Context, *GetUserRequest) (*User, error)
-	Update(context.Context, *UpdateUserRequest) (*User, error)
-	Delete(context.Context, *DeleteUserRequest) (*emptypb.Empty, error)
 	List(context.Context, *ListUserRequest) (*ListUserResponse, error)
 	BatchCreate(context.Context, *BatchCreateUsersRequest) (*BatchCreateUsersResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
@@ -115,12 +92,6 @@ func (UnimplementedUserServiceServer) Create(context.Context, *CreateUserRequest
 }
 func (UnimplementedUserServiceServer) Get(context.Context, *GetUserRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
-}
-func (UnimplementedUserServiceServer) Update(context.Context, *UpdateUserRequest) (*User, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
-}
-func (UnimplementedUserServiceServer) Delete(context.Context, *DeleteUserRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedUserServiceServer) List(context.Context, *ListUserRequest) (*ListUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
@@ -177,42 +148,6 @@ func _UserService_Get_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/entpb.UserService/Update",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Update(ctx, req.(*UpdateUserRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UserService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteUserRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UserServiceServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/entpb.UserService/Delete",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Delete(ctx, req.(*DeleteUserRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _UserService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListUserRequest)
 	if err := dec(in); err != nil {
@@ -263,14 +198,6 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Get",
 			Handler:    _UserService_Get_Handler,
-		},
-		{
-			MethodName: "Update",
-			Handler:    _UserService_Update_Handler,
-		},
-		{
-			MethodName: "Delete",
-			Handler:    _UserService_Delete_Handler,
 		},
 		{
 			MethodName: "List",

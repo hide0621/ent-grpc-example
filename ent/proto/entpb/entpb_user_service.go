@@ -12,7 +12,6 @@ import (
 	fmt "fmt"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
-	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 	strconv "strconv"
 )
@@ -111,58 +110,6 @@ func (svc *UserService) Get(ctx context.Context, req *GetUserRequest) (*User, er
 	switch {
 	case err == nil:
 		return toProtoUser(get)
-	case ent.IsNotFound(err):
-		return nil, status.Errorf(codes.NotFound, "not found: %s", err)
-	default:
-		return nil, status.Errorf(codes.Internal, "internal error: %s", err)
-	}
-
-}
-
-// Update implements UserServiceServer.Update
-func (svc *UserService) Update(ctx context.Context, req *UpdateUserRequest) (*User, error) {
-	user := req.GetUser()
-	userID := int(user.GetId())
-	m := svc.client.User.UpdateOneID(userID)
-	if user.GetAlias() != nil {
-		userAlias := user.GetAlias().GetValue()
-		m.SetAlias(userAlias)
-	}
-	userEmailAddress := user.GetEmailAddress()
-	m.SetEmailAddress(userEmailAddress)
-	userName := user.GetName()
-	m.SetName(userName)
-	for _, item := range user.GetAdministered() {
-		administered := int(item.GetId())
-		m.AddAdministeredIDs(administered)
-	}
-
-	res, err := m.Save(ctx)
-	switch {
-	case err == nil:
-		proto, err := toProtoUser(res)
-		if err != nil {
-			return nil, status.Errorf(codes.Internal, "internal error: %s", err)
-		}
-		return proto, nil
-	case sqlgraph.IsUniqueConstraintError(err):
-		return nil, status.Errorf(codes.AlreadyExists, "already exists: %s", err)
-	case ent.IsConstraintError(err):
-		return nil, status.Errorf(codes.InvalidArgument, "invalid argument: %s", err)
-	default:
-		return nil, status.Errorf(codes.Internal, "internal error: %s", err)
-	}
-
-}
-
-// Delete implements UserServiceServer.Delete
-func (svc *UserService) Delete(ctx context.Context, req *DeleteUserRequest) (*emptypb.Empty, error) {
-	var err error
-	id := int(req.GetId())
-	err = svc.client.User.DeleteOneID(id).Exec(ctx)
-	switch {
-	case err == nil:
-		return &emptypb.Empty{}, nil
 	case ent.IsNotFound(err):
 		return nil, status.Errorf(codes.NotFound, "not found: %s", err)
 	default:
